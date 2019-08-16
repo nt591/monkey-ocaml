@@ -1,0 +1,6 @@
+_build
+node_modules
+
+# Merlin files
+.merlin
+*/.merlin
