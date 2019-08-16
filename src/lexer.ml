@@ -11,6 +11,9 @@ module Lexer = struct
   (* https://stackoverflow.com/questions/36993643/idiomatic-way-to-include-a-null-character-byte-in-a-string-in-ocaml *)
   let null_byte = '\x00'
 
+  let peek_char lexer =
+    if lexer.read_position >= String.length(lexer.input) then null_byte else String.get lexer.input lexer.read_position
+
   let read_char lexer =
     let read_to_end = lexer.read_position >= String.length(lexer.input) in
     let new_ch = match read_to_end with
@@ -44,8 +47,11 @@ module Lexer = struct
 
   let rec next_char lexer =
     let skip l = l |> read_char |> next_char in
+    let double_read l = l |> read_char |> read_char in
     match lexer.ch with
-    | '=' -> (read_char lexer, Token.ASSIGN)
+    | '=' -> if (peek_char lexer) = '='
+      then (double_read lexer , Token.EQ)
+      else (read_char lexer, Token.ASSIGN)
     | ';' -> (read_char lexer, Token.SEMICOLON)
     | '(' -> (read_char lexer, Token.LPAREN)
     | ')' -> (read_char lexer, Token.RPAREN)
@@ -53,6 +59,14 @@ module Lexer = struct
     | '+' -> (read_char lexer, Token.PLUS)
     | '{' -> (read_char lexer, Token.LBRACE)
     | '}' -> (read_char lexer, Token.RBRACE)
+    | '-' -> (read_char lexer, Token.MINUS)
+    | '!' -> if (peek_char lexer) = '='
+        then (double_read lexer, Token.NOT_EQ)
+        else (read_char lexer, Token.BANG)
+    | '*' -> (read_char lexer, Token.ASTERISK)
+    | '/' -> (read_char lexer, Token.SLASH)
+    | '<' -> (read_char lexer, Token.LT)
+    | '>' ->( read_char lexer, Token.GT)
     | ' ' -> skip lexer
     | '\t' -> skip lexer
     | '\n' -> skip lexer

@@ -19,6 +19,19 @@ let source_test_string =
   };
 
   let result = add(five, ten);
+
+	!-/*5;
+	5 < 10 > 5;
+
+	if (5 < 10) {
+		return true;
+	} else {
+		return false;
+	}
+
+
+	10 == 10;
+	10 != 9;
   "
 
 let source_test_expected =
@@ -67,7 +80,48 @@ let source_test_expected =
 		Token.RPAREN;
 		Token.SEMICOLON;
 
+		(* // junk *)
+		Token.BANG;
+		Token.MINUS;
+		Token.SLASH;
+		Token.ASTERISK;
+		Token.INT "5";
+		Token.SEMICOLON;
+		Token.INT "5";
+		Token.LT;
+		Token.INT "10";
+		Token.GT;
+		Token.INT "5";
+		Token.SEMICOLON;
 
+		(* // if/else/return *)
+		Token.IF;
+		Token.LPAREN;
+		Token.INT "5";
+		Token.LT;
+		Token.INT "10";
+		Token.RPAREN;
+		Token.LBRACE;
+		Token.RETURN;
+		Token.TRUE;
+		Token.SEMICOLON;
+		Token.RBRACE;
+		Token.ELSE;
+		Token.LBRACE;
+		Token.RETURN;
+		Token.FALSE;
+		Token.SEMICOLON;
+		Token.RBRACE;
+
+		(* // double character operators *)
+		Token.INT "10";
+		Token.EQ;
+		Token.INT "10";
+		Token.SEMICOLON;
+		Token.INT "10";
+		Token.NOT_EQ;
+		Token.INT "9";
+		Token.SEMICOLON;
     (* sentinel *)
     Token.EOF;
   ]

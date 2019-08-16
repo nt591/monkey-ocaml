@@ -9,6 +9,12 @@ module Token =  struct
     (* Operators *)
     | ASSIGN
     | PLUS
+    | MINUS
+    | BANG
+    | ASTERISK
+    | SLASH
+    | LT
+    | GT
     (* -- Delimiters *)
     | COMMA
     | SEMICOLON
@@ -19,6 +25,13 @@ module Token =  struct
     (* -- Keywords *)
     | FUNCTION
     | LET
+    | TRUE
+    | FALSE
+    | IF
+    | ELSE
+    | RETURN
+    | EQ
+    | NOT_EQ
 
 
   type token = {
@@ -41,10 +54,29 @@ module Token =  struct
   | RBRACE -> "RBRACE"
   | FUNCTION -> "FUNCTION"
   | LET -> "LET"
+  | MINUS -> "MINUS"
+  | BANG -> "BANG"
+  | ASTERISK -> "ASTERISK"
+  | SLASH -> "SLASH"
+  | LT -> "LT"
+  | GT -> "GT"
+  | TRUE -> "TRUE"
+  | FALSE -> "FALSE"
+  | IF -> "IF"
+  | ELSE -> "ELSE"
+  | RETURN -> "RETURN"
+  | EQ -> "EQ"
+  | NOT_EQ -> "NOT_EQ"
 
+  (* TODO, convert from association list to map *)
   let string_to_token = [
     "fn", FUNCTION;
     "let", LET;
+    "if", IF;
+    "else", ELSE;
+    "true", TRUE;
+    "false", FALSE;
+    "return", RETURN;
   ]
 
   let lookupIdent str = try
