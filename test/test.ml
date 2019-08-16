@@ -7,7 +7,70 @@ let test_list_concat () =
     "same lists" [ 1; 2; 3 ]
     (List.append [ 1 ] [ 2; 3 ])
 
-let token_testable = Alcotest.testable Token.pretty_print (=)
+let token_testable = Alcotest.testable Token.pretty_print Token.tokens_eq
+
+let source_test_string =
+  "let five = 5;
+
+  let ten = 10;
+
+  let add = fn(x, y) {
+    x + y;
+  };
+
+  let result = add(five, ten);
+  "
+
+let source_test_expected =
+  [
+    (* // let five = 5 *)
+		Token.LET;
+		Token.IDENT "five";
+		Token.ASSIGN;
+		Token.INT "5";
+		Token.SEMICOLON;
+
+		(* // let ten = 10 *)
+		Token.LET;
+		Token.IDENT "ten";
+		Token.ASSIGN;
+		Token.INT "10";
+		Token.SEMICOLON;
+
+		(* // function definition *)
+		Token.LET;
+		Token.IDENT "add";
+		Token.ASSIGN;
+		Token.FUNCTION;
+		Token.LPAREN;
+		Token.IDENT "x";
+		Token.COMMA;
+		Token.IDENT "y";
+		Token.RPAREN;
+		Token.LBRACE;
+		Token.IDENT "x";
+		Token.PLUS;
+		Token.IDENT "y";
+		Token.SEMICOLON;
+		Token.RBRACE;
+		Token.SEMICOLON;
+
+		(* // result definition *)
+		Token.LET;
+		Token.IDENT "result";
+		Token.ASSIGN;
+		Token.IDENT "add";
+		Token.LPAREN;
+		Token.IDENT "five";
+		Token.COMMA;
+		Token.IDENT "ten";
+		Token.RPAREN;
+		Token.SEMICOLON;
+
+
+    (* sentinel *)
+    Token.EOF;
+  ]
 
 let test_lexer_delimiters () =
   Alcotest.(check (list token_testable))
@@ -23,10 +86,20 @@ let test_lexer_delimiters () =
       ; Token.EOF
       ]
       (Lexer.generate_tokens "=+(){},;")
+
+
+let test_lexer_source () =
+  Alcotest.(check (list token_testable))
+    "source code can lex" source_test_expected
+      (Lexer.generate_tokens source_test_string)
+
 (* Run it *)
 let () =
-  Alcotest.run "Utils"
+  Alcotest.run "Lexer"
     [
       ( "list-delimiters",
-        [ Alcotest.test_case "first case" `Slow test_lexer_delimiters ] )
+        [ Alcotest.test_case "first case" `Slow test_lexer_delimiters ] );
+
+      ( "Lexer.generate_tokens",
+        [ Alcotest.test_case "source code" `Slow test_lexer_source ] )
     ]
